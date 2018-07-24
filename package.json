@@ -1,0 +1,30 @@
+{
+  "name": "todolistapi",
+  "version": "1.0.0",
+  "description": "RESTful todoListAPI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/MrLPager/todoListAPI.git"
+  },
+  "keywords": [
+    "todoListAPI"
+  ],
+  "author": "Levente Pager",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrLPager/todoListAPI/issues"
+  },
+  "homepage": "https://github.com/MrLPager/todoListAPI#readme",
+  "devDependencies": {
+    "nodemon": "^1.18.3"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "mongoose": "^5.2.5"
+  }
+}
