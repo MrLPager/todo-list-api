@@ -1,19 +1,13 @@
 'use strict';
-module.exports = function(app) {
-  const todoList = require('../controllers/todoListController');
-  const test = require('../controllers/testController');
+import todoList from '../controllers/todoListController';
 
+module.exports = app => {  
   // todoList Routes
-  app.route('/tasks')
-    .get(todoList.list_all_tasks)
-    .post(todoList.create_a_task);
+  app.route("/tasks")
+     .get(todoList.getTasks)
+     .post(todoList.createTask);
 
-
-  app.route('/tasks/:taskId')
-    .get(todoList.read_a_task)
-    .put(todoList.update_a_task)
-    .delete(todoList.delete_a_task);
-
-  app.route('/test')
-    .get(test.getSomeValues);
+  app.route("/tasks/:taskId")
+     .get(todoList.getTask)
+     .post(todoList.updateTask);
 };

@@ -37,5 +37,6 @@ export const DynamoAction = {
   query: operation("query"),
   scan: operation("scan"),
   get: operation("get"),
-  update: operation("update")
+  update: operation("update"),
+  put: operation("put")
 };

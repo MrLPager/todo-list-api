@@ -1,48 +1,37 @@
-'use strict';
+import { createNewTask, getTaskById, getAllTasks, updateTask } from "../entities/task.js";
 
-var mongoose = require('mongoose'),
-  Task = mongoose.model('Tasks');
-
-exports.list_all_tasks = function(req, res) {
-  Task.find({}, function(err, task) {
-    if (err)
-      res.send(err);
-    res.json(task);
-  });
+exports.createTask = async (req, res) => {
+  try {
+    const result = await createNewTask(req.body);
+    res.json(result);
+  } catch (err) {
+    console.log("createTask error: ", err);
+  }
 };
 
-exports.create_a_task = function(req, res) {
-  var new_task = new Task(req.body);
-  new_task.save(function(err, task) {
-    if (err)
-      res.send(err);
-    res.json(task);
-  });
+exports.getTask = async (req, res) => {
+  try {
+    const result = await getTaskById(req.params.taskId);
+    res.json(result);
+  } catch (err) {
+    console.log("getTask error: ", err);
+  }
 };
 
-exports.read_a_task = function(req, res) {
-  Task.findById(req.params.taskId, function(err, task) {
-    if (err)
-      res.send(err);
-    res.json(task);
-  });
+exports.getTasks = async (req, res) => {
+  try {
+    const result = await getAllTasks();
+    res.json(result);
+  } catch (err) {
+    console.log("getTasks error: ", err);
+  }
 };
 
-exports.update_a_task = function(req, res) {
-  Task.findOneAndUpdate({_id: req.params.taskId}, req.body, {new: true}, function(err, task) {
-    if (err)
-      res.send(err);
-    res.json(task);
-  });
-};
-
-exports.delete_a_task = function(req, res) {
-
-  Task.remove({
-    _id: req.params.taskId
-  }, function(err, task) {
-    if (err)
-      res.send(err);
-    res.json({ message: 'Task successfully deleted' });
-  });
+exports.updateTask = async (req, res) => {
+  try {
+    const result = await updateTask(req.params.taskId, req.body);
+    res.json(result);
+  } catch (err) {
+    console.log("updateTask error: ", err);
+  }
 };
