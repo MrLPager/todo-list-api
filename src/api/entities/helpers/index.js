@@ -1,43 +1,46 @@
-import config from "../../../../config";
+/* eslint no-console: ["error", { allow: ["warn", "error", "log"] }] */
+import config from '../../../../config';
 
 export const operation = method => (
   client,
   params,
-  maxRetries = config.get("db.operationSettings.maxRetries"),
-  timeout = config.get("db.operationSettings.timeout")
-) => {
-  return new Promise((resolve, reject) => {
-    const dbAction = (counter = 0) => {
-      return client[method](params, (error, data) => {
-        if (
-          error &&
-          error.code === "ProvisionedThroughputExceededException" &&
-          counter < maxRetries
-        ) {
-          console.log(
-            `ProvisionedThroughputExceededException error catched, wait 1 second and try it again`
-          );
-          return setTimeout(() => dbAction(++counter), timeout);
-        }
+  maxRetries = config.get('db.operationSettings.maxRetries'),
+  timeout = config.get('db.operationSettings.timeout'),
+) => new Promise((resolve, reject) => {
+  const dbAction = (counter = 0) => client[method](params, (error, data) => {
+    let iCounter = counter;
+    if (
+      error
+          && error.code === 'ProvisionedThroughputExceededException'
+          && iCounter < maxRetries
+    ) {
+      console.log(
+        'ProvisionedThroughputExceededException error catched, wait 1 second and try it again',
+      );
+      iCounter += 1;
+      return setTimeout(() => dbAction(iCounter), timeout);
+    }
 
-        if (error && error.code === "ProvisionedThroughputExceededException")
-          return reject(`Server is too busy. Try again later.`);
-        if (error)
-          return console.log("Dynamo scan failed: ", error), reject(error);
+    if (error && error.code === 'ProvisionedThroughputExceededException') {
+      console.log('Server is too busy. Try again later: ', error);
+      return reject(error);
+    }
+    if (error) {
+      console.log('Dynamo scan failed: ', error);
+      return reject(error);
+    }
 
-        return resolve(data);
-      });
-    };
-
-    return dbAction();
+    return resolve(data);
   });
-};
+
+  return dbAction();
+});
 
 export const DynamoAction = {
-  query: operation("query"),
-  scan: operation("scan"),
-  get: operation("get"),
-  update: operation("update"),
-  put: operation("put"),
-  delete: operation("delete")
+  query: operation('query'),
+  scan: operation('scan'),
+  get: operation('get'),
+  update: operation('update'),
+  put: operation('put'),
+  delete: operation('delete'),
 };

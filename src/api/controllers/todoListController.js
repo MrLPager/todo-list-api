@@ -3,8 +3,8 @@ import {
   getTaskById,
   getAllTasks,
   updateTask,
-  deleteTask
-} from "../entities/task.js";
+  deleteTask,
+} from '../entities/task';
 
 exports.createTask = async (req, res) => {
   try {

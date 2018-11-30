@@ -1,27 +1,79 @@
-import AWS from "aws-sdk";
-import { DynamoAction } from "./helpers";
-import { exists } from "fs";
+import AWS from 'aws-sdk';
+import { DynamoAction } from './helpers';
 
-const uuid = require("uuid/v1");
+const uuid = require('uuid/v1');
 
 const documentClient = new AWS.DynamoDB.DocumentClient({
-  service: new AWS.DynamoDB()
+  service: new AWS.DynamoDB(),
 });
 
-export const createNewTask = async taskData => {
+export const deleteItem = async (id) => {
+  try {
+    const param = {
+      TableName: `${process.env.TODOLIST_TASK_TABLE}-${
+        process.env.TODOLIST_STAGE
+      }`,
+      Key: { id },
+      ConditionExpression: 'attribute_exists(id)',
+    };
+
+    const res = await DynamoAction.delete(documentClient, param);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateItem = async (id, data, updateCondition) => {
+  try {
+    const aValues = {};
+    const aNames = {};
+
+    let updateExpression = '';
+    Object.keys(data).forEach((i) => {
+      aValues[`:${i}`] = data[i];
+      aNames[`#${i}`] = i;
+      if (updateExpression) updateExpression += ', ';
+      updateExpression += `#${i} = :${i}`;
+    });
+
+    let updateConditionExpression = '';
+    Object.keys(updateCondition).forEach((i) => {
+      aValues[`:cond${i}`] = updateCondition[i];
+      updateConditionExpression += ` AND #${i} = :cond${i}`;
+    });
+
+    const param = {
+      TableName: `${process.env.TODOLIST_TASK_TABLE}-${
+        process.env.TODOLIST_STAGE
+      }`,
+      Key: { id },
+      UpdateExpression: `set ${updateExpression}`,
+      ExpressionAttributeNames: aNames,
+      ExpressionAttributeValues: aValues,
+      ConditionExpression: `attribute_exists(id)${updateConditionExpression}`,
+    };
+    const res = await DynamoAction.update(documentClient, param);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createNewTask = async (taskData) => {
   try {
     const itemData = {
       ...taskData,
       id: uuid(),
-      status: "pending",
+      status: 'pending',
       createDate: Date.now(),
-      updateDate: Date.now()
+      updateDate: Date.now(),
     };
     const params = {
       TableName: `${process.env.TODOLIST_TASK_TABLE}-${
         process.env.TODOLIST_STAGE
       }`,
-      Item: itemData
+      Item: itemData,
     };
 
     const data = await DynamoAction.put(documentClient, params);
@@ -31,13 +83,13 @@ export const createNewTask = async taskData => {
   }
 };
 
-export const getTaskById = async taskId => {
+export const getTaskById = async (taskId) => {
   try {
     const param = {
       TableName: `${process.env.TODOLIST_TASK_TABLE}-${
         process.env.TODOLIST_STAGE
       }`,
-      Key: { id: taskId }
+      Key: { id: taskId },
     };
 
     const data = await DynamoAction.get(documentClient, param);
@@ -52,7 +104,7 @@ export const getAllTasks = async () => {
     const param = {
       TableName: `${process.env.TODOLIST_TASK_TABLE}-${
         process.env.TODOLIST_STAGE
-      }`
+      }`,
     };
     const data = await DynamoAction.scan(documentClient, param);
     return data;
@@ -65,7 +117,7 @@ export const updateTask = async (taskId, updateData) => {
   try {
     const data = await updateItem(taskId, {
       ...updateData,
-      updateDate: Date.now()
+      updateDate: Date.now(),
     });
     return data;
   } catch (error) {
@@ -73,62 +125,10 @@ export const updateTask = async (taskId, updateData) => {
   }
 };
 
-export const deleteTask = async taskId => {
+export const deleteTask = async (taskId) => {
   try {
     const data = await deleteItem(taskId);
     return data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const deleteItem = async id => {
-  try {
-    const param = {
-      TableName: `${process.env.TODOLIST_TASK_TABLE}-${
-        process.env.TODOLIST_STAGE
-      }`,
-      Key: { id: id },
-      ConditionExpression: "attribute_exists(id)"
-    };
-
-    const res = await DynamoAction.delete(documentClient, param);
-    return res;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const updateItem = async (id, data, updateCondition) => {
-  try {
-    const aValues = {};
-    const aNames = {};
-    let updateExpression = "";
-    for (const i in data) {
-      aValues[`:${i}`] = data[i];
-      aNames[`#${i}`] = i;
-      if (updateExpression) updateExpression += ", ";
-      updateExpression += `#${i} = :${i}`;
-    }
-
-    let updateConditionExpression = "";
-    for (const i in updateCondition) {
-      aValues[`:cond${i}`] = updateCondition[i];
-      updateConditionExpression += ` AND #${i} = :cond${i}`;
-    }
-
-    const param = {
-      TableName: `${process.env.TODOLIST_TASK_TABLE}-${
-        process.env.TODOLIST_STAGE
-      }`,
-      Key: { id: id },
-      UpdateExpression: "set " + updateExpression,
-      ExpressionAttributeNames: aNames,
-      ExpressionAttributeValues: aValues,
-      ConditionExpression: "attribute_exists(id)" + updateConditionExpression
-    };
-    const res = await DynamoAction.update(documentClient, param);
-    return res;
   } catch (error) {
     throw error;
   }
