@@ -2,11 +2,11 @@
   "name": "todolistapi",
   "version": "1.0.0",
   "description": "RESTful todoListAPI",
-  "main": "src/worker.js",
+  "main": "src/dev.js",
   "scripts": {
-    "start": "node src/server.js",
+    "start": "node lib/server.js",
     "build": "babel src --out-dir lib",
-    "worker": "rm -rf lib && npm run build && cross-env LOCAL=true AWS_REGION=eu-west-1 node lib/server.js",
+    "dev": "rm -rf lib && npm run build && cross-env LOCAL=true AWS_REGION=eu-west-1 node lib/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
