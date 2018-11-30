@@ -38,10 +38,12 @@ export const updateItem = async (id, data, updateCondition) => {
     });
 
     let updateConditionExpression = '';
-    Object.keys(updateCondition).forEach((i) => {
-      aValues[`:cond${i}`] = updateCondition[i];
-      updateConditionExpression += ` AND #${i} = :cond${i}`;
-    });
+    if (updateCondition) {
+      Object.keys(updateCondition).forEach((i) => {
+        aValues[`:cond${i}`] = updateCondition[i];
+        updateConditionExpression += ` AND #${i} = :cond${i}`;
+      });
+    }
 
     const param = {
       TableName: `${process.env.TODOLIST_TASK_TABLE}-${
@@ -53,6 +55,7 @@ export const updateItem = async (id, data, updateCondition) => {
       ExpressionAttributeValues: aValues,
       ConditionExpression: `attribute_exists(id)${updateConditionExpression}`,
     };
+
     const res = await DynamoAction.update(documentClient, param);
     return res;
   } catch (error) {
