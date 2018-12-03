@@ -1,7 +1,6 @@
 import AWS from 'aws-sdk';
+import uuid from 'uuid/v1';
 import { DynamoAction } from './helpers';
-
-const uuid = require('uuid/v1');
 
 const documentClient = new AWS.DynamoDB.DocumentClient({
   service: new AWS.DynamoDB(),
@@ -63,7 +62,7 @@ export const updateItem = async (id, data, updateCondition) => {
   }
 };
 
-export const createNewTask = async (taskData) => {
+export const createTask = async (taskData) => {
   try {
     const itemData = {
       ...taskData,
@@ -86,7 +85,7 @@ export const createNewTask = async (taskData) => {
   }
 };
 
-export const getTaskById = async (taskId) => {
+export const getTask = async (taskId) => {
   try {
     const param = {
       TableName: `${process.env.TODOLIST_TASK_TABLE}-${
@@ -102,7 +101,7 @@ export const getTaskById = async (taskId) => {
   }
 };
 
-export const getAllTasks = async () => {
+export const getTasks = async () => {
   try {
     const param = {
       TableName: `${process.env.TODOLIST_TASK_TABLE}-${

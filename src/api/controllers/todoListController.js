@@ -1,14 +1,14 @@
 import {
-  createNewTask,
-  getTaskById,
-  getAllTasks,
+  createTask,
+  getTask,
+  getTasks,
   updateTask,
   deleteTask,
 } from '../entities/task';
 
 exports.createTask = async (req, res) => {
   try {
-    const result = await createNewTask(req.body);
+    const result = await createTask(req.body);
     res.json(result);
   } catch (err) {
     res.json({ error: err });
@@ -17,7 +17,7 @@ exports.createTask = async (req, res) => {
 
 exports.getTask = async (req, res) => {
   try {
-    const result = await getTaskById(req.params.taskId);
+    const result = await getTask(req.params.taskId);
     res.json(result);
   } catch (err) {
     res.json({ error: err });
@@ -26,7 +26,7 @@ exports.getTask = async (req, res) => {
 
 exports.getTasks = async (req, res) => {
   try {
-    const result = await getAllTasks();
+    const result = await getTasks();
     res.json(result);
   } catch (err) {
     res.json({ error: err });
