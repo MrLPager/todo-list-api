@@ -7,5 +7,4 @@ node_modules/
 lib
 
 # env
-.env-sample
 .env
