@@ -1,4 +1,10 @@
-import { createTask, getTask, updateTask } from '../src/api/entities/task';
+import {
+  createTask,
+  getTask,
+  getTasks,
+  updateTask,
+  deleteItem,
+} from '../src/api/entities/task';
 import config from '../config';
 
 /* eslint no-console: ["error", { allow: ["warn", "error", "log"] }] */
@@ -14,7 +20,7 @@ beforeAll(() => {
   }
 });
 
-describe('Todo List', () => {
+describe('Todo List API Test', () => {
   describe('CRUD Task', () => {
     test('Create Task', async () => {
       expect.assertions(1);
@@ -27,12 +33,13 @@ describe('Todo List', () => {
     });
 
     test('Get Task By ID', async () => {
-      expect.assertions(1);
+      expect.assertions(2);
       const data = {
         name: 'Title',
         description: 'Description',
       };
       const task = await createTask(data);
+      expect(task).toEqual({ ...task, name: data.name, description: data.description });
       const theTask = await getTask(task.id);
       expect(theTask).toEqual({
         Item: {
@@ -47,18 +54,47 @@ describe('Todo List', () => {
     });
 
     test('Update Task By ID', async () => {
-      expect.assertions(1);
+      expect.assertions(2);
       const data = {
         name: 'Title',
         description: 'Description',
       };
       const task = await createTask(data);
+      expect(task).toEqual({ ...task, name: data.name, description: data.description });
       const updateData = {
         name: 'Test Title',
         description: 'Test Description',
       };
-      const resoult = await updateTask(task.id, updateData);
-      expect(resoult).toEqual({});
+      const result = await updateTask(task.id, updateData);
+      expect(result).toEqual({});
+    });
+
+    test('Delete Task By ID', async () => {
+      expect.assertions(2);
+      const data = {
+        name: 'Title',
+        description: 'Description',
+      };
+      const task = await createTask(data);
+      expect(task).toEqual({ ...task, name: data.name, description: data.description });
+      const result = await deleteItem(task.id);
+      expect(result).toEqual({});
+    });
+
+    test('Get Tasks', async () => {
+      expect.assertions(2);
+      const data = {
+        name: 'Title',
+        description: 'Description',
+      };
+      const task = await createTask(data);
+      expect(task).toEqual({ ...task, name: data.name, description: data.description });
+      const result = await getTasks();
+      expect(result).toEqual({
+        Items: expect.any(Array),
+        Count: expect.any(Number),
+        ScannedCount: expect.any(Number),
+      });
     });
   });
 });
