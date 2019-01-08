@@ -15,7 +15,7 @@ process.env.TODOLIST_TASK_TABLE = config.get('toDoListTableName', process.env.TO
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const routes = require('./api/routes/todoListRoutes');
+const routes = require('./api/routes/task');
 
 routes(app);
 
