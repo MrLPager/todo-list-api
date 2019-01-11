@@ -1,6 +1,12 @@
 import AWS from 'aws-sdk';
 import uuid from 'uuid/v1';
 import { DynamoAction } from './helpers';
+import config from '../../../config';
+
+AWS.config.update({
+  region: "es-west-1",
+  endpoint: "http://dynamodb:8000"
+});
 
 const documentClient = new AWS.DynamoDB.DocumentClient({
   service: new AWS.DynamoDB(),

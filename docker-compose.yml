@@ -5,7 +5,25 @@ services:
     build: .
     env_file: .env
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    networks: 
+      - dynamodb-development
 
+  dynamodb:
+    image: amazon/dynamodb-local
+    ports: 
+      - '8000:8000'
+    command: -jar DynamoDBLocal.jar -sharedDb -dbPath /data/
+    volumes:
+      - '${PWD}/local/dynamodb:/data/'
+    networks: 
+      - dynamodb-development
+
+networks:
+  dynamodb-development:
+    driver: bridge
+
+volumes: 
+  dynamodb-data:
