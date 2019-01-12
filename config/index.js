@@ -1,8 +1,14 @@
 const defaultConfig = require('./default');
 const dev = require('./dev');
 const composeDev = require('./composeDev');
+const test = require('./test');
 
-const configHolder = { defaultConfig, dev, composeDev };
+const configHolder = {
+  defaultConfig,
+  dev,
+  composeDev,
+  test,
+};
 
 const getValue = (obj, path) => {
   let value = {};

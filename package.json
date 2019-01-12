@@ -10,6 +10,7 @@
     "compose-dev": "rm -rf lib && npm run build && cross-env TODOLIST_STAGE=composeDev AWS_ACCESS_KEY_ID=fakeAccessKey AWS_SECRET_ACCESS_KEY=fakeSecretAccessKey AWS_REGION=eu-west-1 node lib/server.js",
     "lint": "eslint src/** config/** test/** --fix",
     "test": "./test.sh",
+    "test-local": "cross-env LOCAL=true ./test.sh",
     "coverage": "jest --collectCoverageFrom=src/**.js --coverage src"
   },
   "repository": {
