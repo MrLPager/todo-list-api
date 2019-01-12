@@ -3,21 +3,17 @@ import uuid from 'uuid/v1';
 import { DynamoAction } from './helpers';
 import config from '../../../config';
 
-AWS.config.update({
-  region: "es-west-1",
-  endpoint: "http://dynamodb:8000"
-});
-
 const documentClient = new AWS.DynamoDB.DocumentClient({
-  service: new AWS.DynamoDB(),
+  service: (process.env.TODOLIST_STAGE !== 'prod') ? new AWS.DynamoDB({
+    endpoint: config.get('endpoint', process.env.TODOLIST_STAGE),
+    region: config.get('region', process.env.TODOLIST_STAGE),
+  }) : new AWS.DynamoDB(),
 });
 
 export const deleteItem = async (id) => {
   try {
     const param = {
-      TableName: `${process.env.TODOLIST_TASK_TABLE}-${
-        process.env.TODOLIST_STAGE
-      }`,
+      TableName: `${process.env.TODOLIST_TASK_TABLE}`,
       Key: { id },
       ConditionExpression: 'attribute_exists(id)',
     };
@@ -51,9 +47,7 @@ export const updateItem = async (id, data, updateCondition) => {
     }
 
     const param = {
-      TableName: `${process.env.TODOLIST_TASK_TABLE}-${
-        process.env.TODOLIST_STAGE
-      }`,
+      TableName: `${process.env.TODOLIST_TASK_TABLE}`,
       Key: { id },
       UpdateExpression: `set ${updateExpression}`,
       ExpressionAttributeNames: aNames,
@@ -78,9 +72,7 @@ export const createTask = async (taskData) => {
       updateDate: Date.now(),
     };
     const params = {
-      TableName: `${process.env.TODOLIST_TASK_TABLE}-${
-        process.env.TODOLIST_STAGE
-      }`,
+      TableName: `${process.env.TODOLIST_TASK_TABLE}`,
       Item: itemData,
     };
 
@@ -94,9 +86,7 @@ export const createTask = async (taskData) => {
 export const getTask = async (taskId) => {
   try {
     const param = {
-      TableName: `${process.env.TODOLIST_TASK_TABLE}-${
-        process.env.TODOLIST_STAGE
-      }`,
+      TableName: `${process.env.TODOLIST_TASK_TABLE}`,
       Key: { id: taskId },
     };
 
@@ -110,9 +100,7 @@ export const getTask = async (taskId) => {
 export const getTasks = async () => {
   try {
     const param = {
-      TableName: `${process.env.TODOLIST_TASK_TABLE}-${
-        process.env.TODOLIST_STAGE
-      }`,
+      TableName: `${process.env.TODOLIST_TASK_TABLE}`,
     };
     const data = await DynamoAction.scan(documentClient, param);
     return data;

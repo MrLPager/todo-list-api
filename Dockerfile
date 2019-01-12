@@ -37,4 +37,4 @@ RUN npm install
 # Copy app source code
 COPY . .
 
-CMD $(aws ecr get-login --no-include-email --region $AWS_REGION) && npm run dev
+CMD npm run start

@@ -1,4 +1,4 @@
 module.exports = {
   region: 'eu-west-1',
-  endpoint: 'http://localhost:8000',
+  endpoint: 'http://dynamodb:8000',
 };
